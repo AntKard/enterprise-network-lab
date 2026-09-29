@@ -1,0 +1,200 @@
+Current configuration : 3656 bytes
+!
+version 12.2(37)SE1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname CORE-SW
+!
+!
+enable secret 5 $1$mERr$Q0YMT47SkSA7s7fFPtTsB1
+!
+!
+!
+!
+!
+ip routing
+!
+!
+!
+!
+username netadmin privilege 15 secret 5 $1$mERr$1j5AfM/N1KwdPiw15eETu/
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+ip domain-name corp.local
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Port-channel1
+ switchport trunk allowed vlan 10,20,30,40,50,99
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface FastEthernet0/1
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/2
+!
+interface FastEthernet0/3
+!
+interface FastEthernet0/4
+!
+interface FastEthernet0/5
+!
+interface FastEthernet0/6
+!
+interface FastEthernet0/7
+!
+interface FastEthernet0/8
+!
+interface FastEthernet0/9
+!
+interface FastEthernet0/10
+!
+interface FastEthernet0/11
+!
+interface FastEthernet0/12
+!
+interface FastEthernet0/13
+!
+interface FastEthernet0/14
+!
+interface FastEthernet0/15
+!
+interface FastEthernet0/16
+!
+interface FastEthernet0/17
+!
+interface FastEthernet0/18
+!
+interface FastEthernet0/19
+!
+interface FastEthernet0/20
+!
+interface FastEthernet0/21
+!
+interface FastEthernet0/22
+ switchport trunk allowed vlan 10,20,30,40,50,99
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface FastEthernet0/23
+ switchport trunk allowed vlan 10,20,30,40,50,99
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface FastEthernet0/24
+ switchport trunk allowed vlan 10,20,30,40,50,99
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface GigabitEthernet0/1
+ no switchport
+ ip address 10.0.0.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan10
+ mac-address 00d0.97e8.4401
+ ip address 192.168.10.1 255.255.255.0
+ ip helper-address 192.168.50.10
+!
+interface Vlan20
+ mac-address 00d0.97e8.4402
+ ip address 192.168.20.1 255.255.255.0
+ ip helper-address 192.168.50.10
+!
+interface Vlan30
+ mac-address 00d0.97e8.4403
+ ip address 192.168.30.1 255.255.255.0
+ ip helper-address 192.168.50.10
+!
+interface Vlan40
+ mac-address 00d0.97e8.4404
+ ip address 192.168.40.1 255.255.255.0
+ ip helper-address 192.168.50.10
+ ip access-group GUEST-IN in
+!
+interface Vlan50
+ mac-address 00d0.97e8.4405
+ ip address 192.168.50.1 255.255.255.0
+!
+interface Vlan99
+ mac-address 00d0.97e8.4406
+ ip address 192.168.99.1 255.255.255.0
+!
+router ospf 1
+ router-id 1.1.1.1
+ log-adjacency-changes
+ passive-interface default
+ no passive-interface GigabitEthernet0/1
+ network 10.0.0.0 0.0.0.3 area 0
+ network 192.168.10.0 0.0.0.255 area 0
+ network 192.168.20.0 0.0.0.255 area 0
+ network 192.168.30.0 0.0.0.255 area 0
+ network 192.168.40.0 0.0.0.255 area 0
+ network 192.168.50.0 0.0.0.255 area 0
+ network 192.168.99.0 0.0.0.255 area 0
+!
+router rip
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ip access-list extended GUEST-IN
+ permit udp any eq bootpc any eq bootps
+ permit udp 192.168.40.0 0.0.0.255 host 192.168.50.10 eq domain
+ permit tcp 192.168.40.0 0.0.0.255 host 192.168.50.10 eq domain
+ deny ip 192.168.40.0 0.0.0.255 192.168.10.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 192.168.20.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 192.168.30.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 192.168.50.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 192.168.99.0 0.0.0.255
+ permit ip 192.168.40.0 0.0.0.255 any
+access-list 10 permit 192.168.30.0 0.0.0.255
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ access-class 10 in
+ login local
+ transport input ssh
+!
+!
+!
+!
+end
